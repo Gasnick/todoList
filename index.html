@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Listado de tareas</title>
+</head>
+
+<body>
+    <header></header>
+    <nav class="nav-vertical"></nav>
+
+    <main class="tareas">
+        <section class="listado-tareas">
+            <h3>Listado de tareas</h3>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Tarea</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Objetivo al que pertence</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de fin</th>
+                    <th>Acción</th>
+                </tr>
+            </table>
+        </section>
+
+        <section class="búsqueda-tarea">
+            <h3>Búsqueda de tarea</h3>
+            <div class="filtro-busqueda-nombre-prioridad">
+                <label for="">Buscar tarea por nombre o prioridad </label>
+                <input type="text">
+            </div>
+            <div class="filtro-estado">
+                <label for="">Buscar tarea por estado: </label>
+                <label for="">Sin iniciar</label>
+                <input type="checkbox" value="Sin iniciar">
+                <label for="">En proceso</label>
+                <input type="checkbox" value="En proceso">
+                <label for="">Finalizada</label>
+                <input type="checkbox" value="Finalizada">
+            </div>
+        </section>
+
+        <section class="agregar-tareas">
+            <div class="add-tarea">
+                <h3>Agregar nueva tarea</h3>
+                <form action="">
+                    <fieldset id="form_tarea">
+                        <label for="nombre-tarea">Nombre tarea</label>
+                        <input id="nom_tarea" type="text" placeholder="Ejemplo: Lavar auto">
+                        <label for="">Estado</label>
+                        <select name="" id="select_estado">
+                            <option value="sin_iniciar">Sin iniciar</option>
+                            <option value="en_proceso">En proceso</option>
+                            <option value="finalizada">Finalizada</option>
+                        </select>
+                        <label for="">Objetivo al cual pertenece</label>
+                        <input id="objetivo_tarea" type="text">
+                        <label for="prioridad-tarea">Prioridad</label>
+                        <select id="select_prioridad">
+                            <option value="alta">Alta</option>
+                            <option value="intermedia">Intermedia</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                        <textarea id="detalle_tarea" placeholder="Detalle"></textarea>
+                        <label for="">Fecha inicio</label>
+                        <input type="date" name="" id="fecha_i">s
+                        <label for="">Fecha fin</label>
+                        <input type="date" name="" id="fecha_f">
+                        <button>Confirmar</button>
+                    </fieldset>
+                </form>
+            </div>
+        </section>
+        <aside class="">
+            <button class="objetivos_principales">Ir a objetivos principales</button>
+        </aside>
+    </main>
+
+    <footer></footer>
+</body>
+
+</html>
