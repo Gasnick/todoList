@@ -7,165 +7,184 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: rgb(145,222,18);
-    background: linear-gradient(0deg, rgba(145,222,18,1) 0%, rgba(18,15,15,1) 100%);
+    background: linear-gradient(0deg, rgba(145, 222, 18, 1) 0%, rgba(18, 15, 15, 1) 100%);
     background-size: cover;
-    background-attachment: fixed; /* Fija el fondo para que no se mueva al hacer scroll *//* Reset general */
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    
-    html, body {
-        height: 100%;
-        font-family: Arial, sans-serif;
-        background: linear-gradient(0deg, rgba(145,222,18,1) 0%, rgba(18,15,15,1) 100%);
-    }
-    
-    /* Navbar */
-    .navbar {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 15px 20px;
-        background: rgba(0, 0, 0, 0.3);
-    }
-    
-    .menu {
-        list-style: none;
-        display: flex;
-        gap: 20px;
-    }
-    
-    .menu a {
-        text-decoration: none;
-        color: white;
-        font-weight: bold;
-    }
-    
-    /* Estructura Principal */
-    .tareas {
-        display: grid;
-        grid-template-columns: 1fr 3fr 1fr; /* 1/5 - 3/5 - 1/5 */
-        grid-template-rows: auto auto;
-        gap: 20px;
-        padding: 20px;
-    }
-    
-    /* Sección de Búsqueda (Aside Izquierdo) */
-    .búsqueda-tarea {
-        padding: 20px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        color: white;
-    }
-    
-    /* Sección de Listado de Tareas (Centro) */
-    .listado-tareas {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 20px;
-        border-radius: 8px;
-        color: white;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    th, td {
-        border: 1px solid white;
-        padding: 8px;
-        text-align: center;
-    }
-    
-    /* Sección de Calendario (Aside Derecho) */
-    aside {
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px dashed white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        padding: 20px;
-    }
-    
-    /* Formulario de Agregar Tareas */
-    .agregar-tareas {
-        grid-column: 1 / span 3;
-        display: flex;
-        justify-content: center;
-    }
-    
-    .add-tarea {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 20px;
-        border-radius: 8px;
-        width: 50%;
-        color: white;
-        text-align: center;
-    }
-    
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    input, select, textarea, button {
-        padding: 8px;
-        border: none;
-        border-radius: 5px;
-    }
-    
-    button {
-        background: #91de12;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    
+    background-attachment: fixed;
 }
 
-/* Barra de navegación */
+/* Navbar */
 .navbar {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.3); /* Agrega transparencia si lo deseas */
+    background: rgba(0, 0, 0, 0.3);
 }
 
-/* Icono Home */
-.home i {
-    font-size: 24px;
-    color: white;
-}
-
-/* Menú */
 .menu {
     list-style: none;
     display: flex;
     gap: 20px;
-    margin: 0;
-    padding: 0;
-}
-
-.menu li {
-    display: inline;
 }
 
 .menu a {
     text-decoration: none;
     color: white;
-    font-size: 16px;
     font-weight: bold;
-    transition: 0.3s;
 }
 
-.menu a:hover {
-    color: #91de12; /* Cambia el color al pasar el mouse */
+.tareas {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.busqueda-tarea, .listado-tareas, .calendario {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+}
+
+.filtro-estado {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.listado-tareas {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: center;
+}
+
+.icono {
+    width: 36px;
+    height: 36px;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  
+  .icono:hover {
+    transform: scale(1.2);
+    filter: brightness(1.5);
+  }
+  
+  .acciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+
+.agregar-tareas {
+    grid-column: 1 / span 3;
+    display: flex;
+    justify-content: center;
+}
+
+.add-tarea {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    color: white;
+    text-align: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#form_tarea {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#form_tarea label {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+#form_tarea input,
+#form_tarea select,
+#form_tarea textarea {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: rgba(150, 150, 150, 0.603);
+    color: rgb(254, 254, 254);
+    font-size: 14px;
+    width: 100%;
+}
+
+#form_tarea textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+#form_tarea button {
+    background: #223601;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#form_tarea button:hover {
+    background: #76b90f;
+    color: black;
+}
+
+#form_tarea select {
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    appearance: none; /* Quita el estilo por defecto */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,7" fill="white"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px;
+}
+
+/* Para Firefox (estilo interno de las opciones) */
+#form_tarea select option {
+    background-color: black;
+    color: white;
+}
+
+/* No se puede controlar el hover de options en todos los navegadores, pero esto intenta ayudar */
+#form_tarea select:focus option:hover {
+    background-color: white;
+    color: black;
 }
