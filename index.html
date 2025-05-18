@@ -4,21 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Listado de tareas</title>
 </head>
 
 <body>
     <header></header>
-    <nav class="navbar">
-        <a href="#" class="home">
-            <img src="/assets/icons/home.gif" alt="">
-        </a>
-        <ul class="menu">
+    <nav class="sidebar-menu">
+        <ul>
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#calendario">Calendario</a></li>
             <li><a href="pages/objetivos.html">Objetivos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
         </ul>
     </nav>
-
     <main class="tareas">
         <!-- Columna izquierda: búsqueda -->
         <section class="busqueda-tarea">
@@ -74,15 +73,6 @@
             </table>
         </section>
 
-        <!-- Columna derecha: calendario -->
-        <section class="calendario">
-            <h3>Calendario</h3>
-            <div class="calendario-placeholder" style="border: 2px dashed #fff; padding: 1rem; height: 200px;">
-                Aquí va el calendario
-            </div>
-            Vistas: mensual, anual
-        </section>
-
         <!-- Abajo: formulario -->
         <section class="agregar-tareas">
             <div class="add-tarea">
@@ -94,9 +84,9 @@
 
                         <label for="select_estado">Estado</label>
                         <select id="select_estado">
-                            <option value="sin_iniciar">Sin iniciar</option>
-                            <option value="en_proceso">En proceso</option>
-                            <option value="finalizada">Finalizada</option>
+                            <option value="Sin iniciar">Sin iniciar</option>
+                            <option value="En proceso">En proceso</option>
+                            <option value="Finalizada">Finalizada</option>
                         </select>
 
                         <label for="objetivo_tarea">Objetivo al cual pertenece</label>
@@ -118,7 +108,7 @@
                         <label for="fecha_f">Fecha fin</label>
                         <input type="date" id="fecha_f">
 
-                        <button type="submit">Confirmar</button>
+                        <button type="submit" id="confirmar_tarea">Confirmar</button>
                     </fieldset>
                 </form>
 
@@ -126,10 +116,7 @@
         </section>
     </main>
 
-    <footer></footer>
-    <p>-añadir drag and drop
-        -calendario semanal y mensual
-    </p>
+    <script src="js/app.js"></script>
 </body>
 
 </html>

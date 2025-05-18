@@ -1,0 +1,12 @@
+{
+    "id": 1,
+    "nom_tarea": "Tarea 1",
+    "prioridad" : "Baja",
+    "estado" : "En proceso",
+    "objetivo" : "Objetivo 1",
+    "fecha_inicio": "2022-01-01",
+    "fecha_fin": "2022-01-15",
+    "descripcion": "Esta es la descripción de la tarea 1"
+
+
+}

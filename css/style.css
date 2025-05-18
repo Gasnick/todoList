@@ -1,190 +1,335 @@
-/* Estilos generales */
+/* Reset and base styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(0deg, rgba(145, 222, 18, 1) 0%, rgba(18, 15, 15, 1) 100%);
-    background-size: cover;
-    background-attachment: fixed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main layout */
+.tareas {
+  width: 100%;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-template-rows: auto 1fr;
+  gap: 1.5rem 2rem;
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* Search section - horizontal layout with transparency and contrast */
+.busqueda-tarea {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  color: #fff;
+}
+
+.busqueda-tarea h3 {
+  margin-right: 1rem;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #fff;
+}
+
+.filtro-busqueda-nombre-prioridad {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.filtro-busqueda-nombre-prioridad label {
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+}
+
+.filtro-busqueda-nombre-prioridad input {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+}
+
+.filtro-estado {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  color: #fff;
+}
+
+.filtro-estado label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.filtro-estado div {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Form section - polished vertical layout with modern style */
+.agregar-tareas {
+  grid-column: 1 / span 3;
+  margin-top: 2rem;
+  background: #ffffffcc; /* white with 80% opacity */
+  padding: 2.5rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  color: #222;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.agregar-tareas h3 {
+  margin-bottom: 1.5rem;
+  font-weight: 800;
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.agregar-tareas form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.agregar-tareas label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.agregar-tareas input,
+.agregar-tareas select,
+.agregar-tareas textarea {
+  padding: 0.85rem 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  background: #fff;
+  color: #222;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.agregar-tareas input:focus,
+.agregar-tareas select:focus,
+.agregar-tareas textarea:focus {
+  border-color: #5563c1;
+  box-shadow: 0 0 8px rgba(85, 99, 193, 0.6);
+  outline: none;
+}
+
+.agregar-tareas textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.agregar-tareas button {
+  padding: 0.85rem 1.75rem;
+  background-color: #5563c1;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  max-width: 220px;
+  align-self: center;
+  box-shadow: 0 4px 12px rgba(85, 99, 193, 0.6);
+}
+
+.agregar-tareas button:hover {
+  background-color: #334080;
+  box-shadow: 0 6px 18px rgba(51, 64, 128, 0.8);
+}
+
+/* Listado de tareas section */
+.listado-tareas {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.listado-tareas h3 {
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.listado-tareas table {
+  width: 100%;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: #333;
+}
+
+.listado-tareas th,
+.listado-tareas td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.listado-tareas th {
+  background-color: #f4f4f4;
+  font-weight: 700;
+}
+
+.acciones img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-right: 0.5rem;
 }
 
 /* Navbar */
 .navbar {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  border-bottom: 1px solid #ddd;
 }
 
+/* Navbar home image */
+.navbar a.home img {
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+.navbar a.home img:hover {
+  transform: scale(1.1);
+}
+
+/* Navbar menu */
 .menu {
-    list-style: none;
-    display: flex;
-    gap: 20px;
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
 }
 
 .menu a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
 }
 
-.tareas {
-    display: grid;
-    grid-template-columns: 1fr 2fr 1fr;
-    gap: 20px;
-    padding: 20px;
+.menu a:hover {
+  color: #ffd700;
 }
 
-.busqueda-tarea, .listado-tareas, .calendario {
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: white;
+/* Sidebar menu styles */
+.sidebar-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 50px; /* narrow width */
+  background-color: #333;
+  overflow-x: hidden;
+  transition: width 0.3s ease;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
 }
 
-.filtro-estado {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.sidebar-menu:hover {
+  width: 200px; /* expanded width on hover */
 }
 
-.listado-tareas {
-    background: rgba(255, 255, 255, 0.2);
+/* Make sidebar overlay content without shifting */
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+.sidebar-menu ul li {
+  width: 100%;
 }
 
-th, td {
-    border: 1px solid white;
-    padding: 8px;
-    text-align: center;
+.sidebar-menu ul li a {
+  display: block;
+  color: white;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-.icono {
-    width: 36px;
-    height: 36px;
-    margin: 0 5px;
-    cursor: pointer;
-    transition: transform 0.2s ease, filter 0.2s ease;
+.sidebar-menu ul li a:hover,
+.sidebar-menu ul li a.active {
+  background-color: #5563c1;
+  color: white;
+}
+
+/* Remove margin-left from main content to avoid layout shift */
+main.tareas {
+  margin-left: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .sidebar-menu {
+    display: none; /* hide sidebar on small screens */
   }
-  
-  .icono:hover {
-    transform: scale(1.2);
-    filter: brightness(1.5);
+  main.tareas {
+    margin-left: 0;
   }
-  
-  .acciones {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
-  
-
-.agregar-tareas {
-    grid-column: 1 / span 3;
-    display: flex;
-    justify-content: center;
-}
-
-.add-tarea {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 20px;
-    border-radius: 8px;
-    width: 50%;
-    color: white;
-    text-align: center;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-}
-
-#form_tarea {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    max-width: 500px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 20px;
-    border-radius: 8px;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-#form_tarea label {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-#form_tarea input,
-#form_tarea select,
-#form_tarea textarea {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    background: rgba(150, 150, 150, 0.603);
-    color: rgb(254, 254, 254);
-    font-size: 14px;
-    width: 100%;
-}
-
-#form_tarea textarea {
-    resize: vertical;
-    min-height: 60px;
-}
-
-#form_tarea button {
-    background: #223601;
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    padding: 10px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-#form_tarea button:hover {
-    background: #76b90f;
-    color: black;
-}
-
-#form_tarea select {
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    appearance: none; /* Quita el estilo por defecto */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,7" fill="white"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px;
-}
-
-/* Para Firefox (estilo interno de las opciones) */
-#form_tarea select option {
-    background-color: black;
-    color: white;
-}
-
-/* No se puede controlar el hover de options en todos los navegadores, pero esto intenta ayudar */
-#form_tarea select:focus option:hover {
-    background-color: white;
-    color: black;
 }
