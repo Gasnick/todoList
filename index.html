@@ -71,6 +71,12 @@
                     </td>
                 </tr>
             </table>
+            <div class="contenedor-contadores" style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                <div id="contador-sin-iniciar" class="contador-tarea">🕓 Sin iniciar: 0</div>
+                <div id="contador-en-proceso" class="contador-tarea">⚙️ En proceso: 0</div>
+                <div id="contador-finalizada" class="contador-tarea">✅ Finalizada: 0</div>
+            </div>
+
         </section>
 
         <!-- Abajo: formulario -->
@@ -117,6 +123,8 @@
     </main>
 
     <script src="js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </body>
 
 </html>

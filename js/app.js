@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Filter tasks
     const filteredTasks = tasks.filter(task => {
       const matchesText = task.nombre.toLowerCase().includes(filterText.toLowerCase()) ||
-                          task.prioridad.toLowerCase().includes(filterText.toLowerCase());
+        task.prioridad.toLowerCase().includes(filterText.toLowerCase());
       const matchesStatus = normalizedFilterStatuses.length === 0 || normalizedFilterStatuses.includes(task.estado);
       return matchesText && matchesStatus;
     });
@@ -67,14 +67,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Attach event listeners for delete
     const deleteButtons = taskListTable.querySelectorAll('.accion-eliminar');
+
     deleteButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.getAttribute('data-index'));
-        tasks.splice(idx, 1);
-        saveTasks();
-        renderTasks(searchInput.value, getSelectedStatuses());
+
+        Swal.fire({
+          title: '¿Eliminar tarea?',
+          text: "Esta acción no se puede deshacer",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            tasks.splice(idx, 1);
+            saveTasks();
+            renderTasks(searchInput.value, getSelectedStatuses());
+
+            Swal.fire({
+              title: 'Eliminada',
+              text: 'La tarea fue eliminada correctamente.',
+              icon: 'success',
+              timer: 1500,
+              showConfirmButton: false
+            });
+          }
+        });
       });
     });
+
     // Attach event listeners for edit
     const editButtons = taskListTable.querySelectorAll('.accion-editar');
     editButtons.forEach(btn => {
@@ -93,6 +117,21 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    // Al final de renderTasks
+    actualizarContadores();
+
+
+  }
+
+  // Actualizar contadores
+  function actualizarContadores() {
+    const contSinIniciar = tasks.filter(t => t.estado === 'Sin iniciar').length;
+    const contEnProceso = tasks.filter(t => t.estado === 'En proceso').length;
+    const contFinalizada = tasks.filter(t => t.estado === 'Finalizada').length;
+
+    document.getElementById('contador-sin-iniciar').textContent = `🕓 Sin iniciar: ${contSinIniciar}`;
+    document.getElementById('contador-en-proceso').textContent = `⚙️ En proceso: ${contEnProceso}`;
+    document.getElementById('contador-finalizada').textContent = `✅ Finalizada: ${contFinalizada}`;
   }
 
   // Get selected statuses from checkboxes
@@ -134,13 +173,30 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (editIndex === -1) {
-      // Add new task
+      // Nueva tarea
       tasks.push(newTask);
+
+      Swal.fire({ // Uso de SweetAlert
+        icon: 'success',
+        title: 'Tarea agregada',
+        text: 'Tu tarea fue guardada correctamente.',
+        showConfirmButton: false,
+        timer: 1500
+      });
+
     } else {
-      // Update existing task
+      // Tarea actualizada
       tasks[editIndex] = newTask;
       editIndex = -1;
       taskForm.querySelector('#confirmar_tarea').textContent = 'Confirmar';
+
+      Swal.fire({ // Uso de SweetAlert
+        icon: 'success',
+        title: 'Tarea actualizada',
+        text: 'Los cambios fueron guardados con éxito.',
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
 
     saveTasks();
