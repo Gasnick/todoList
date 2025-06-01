@@ -1,3 +1,13 @@
+import { db } from './registroTareas.js'
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', () => {
   const taskForm = document.querySelector('.agregar-tareas form');
   const taskListTable = document.querySelector('.listado-tareas table');
@@ -7,18 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
   let tasks = [];
   let editIndex = -1;
 
-  // Load tasks from localStorage
-  function loadTasks() {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      tasks = JSON.parse(storedTasks);
+  async function loadTasks() {
+    tasks = [];
+    const querySnapshot = await getDocs(collection(db, "tareas"));
+    querySnapshot.forEach((docSnap) => {
+      tasks.push({ id: docSnap.id, ...docSnap.data() });
+      renderTasks();
+    });
+  }
+
+  async function saveTaskToFirebase(task, isUpdate = false) {
+    if (isUpdate) {
+      const taskRef = doc(db, "tareas", task.id);
+      await updateDoc(taskRef, task);
+    } else {
+      await addDoc(collection(db, "tareas"), task);
     }
   }
 
-  // Save tasks to localStorage
-  function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+  async function deleteTaskFromFirebase(id) {
+    await deleteDoc(doc(db, "tareas", id));
   }
+
+
 
   // Map checkbox values to task.estado values if needed
   const statusValueMap = {
@@ -69,10 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const deleteButtons = taskListTable.querySelectorAll('.accion-eliminar');
 
     deleteButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const idx = parseInt(btn.getAttribute('data-index'));
 
-        Swal.fire({
+        const result = await Swal.fire({
           title: '¿Eliminar tarea?',
           text: "Esta acción no se puede deshacer",
           icon: 'warning',
@@ -81,23 +102,22 @@ document.addEventListener('DOMContentLoaded', () => {
           cancelButtonColor: '#3085d6',
           confirmButtonText: 'Sí, eliminar',
           cancelButtonText: 'Cancelar'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            tasks.splice(idx, 1);
-            saveTasks();
-            renderTasks(searchInput.value, getSelectedStatuses());
-
-            Swal.fire({
-              title: 'Eliminada',
-              text: 'La tarea fue eliminada correctamente.',
-              icon: 'success',
-              timer: 1500,
-              showConfirmButton: false
-            });
-          }
         });
+
+        if (result.isConfirmed) {
+          await deleteTaskFromFirebase(tasks[idx].id);
+          await loadTasks(); // recargar tareas
+          Swal.fire({
+            title: 'Eliminada',
+            text: 'La tarea fue eliminada correctamente.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
       });
     });
+
 
     // Attach event listeners for edit
     const editButtons = taskListTable.querySelectorAll('.accion-editar');
@@ -119,8 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Al final de renderTasks
     actualizarContadores();
-
-
   }
 
   // Actualizar contadores
@@ -145,8 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return selected;
   }
 
-  // Handle form submission to add or update task
-  taskForm.addEventListener('submit', (e) => {
+  taskForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nombre = taskForm.querySelector('#nom_tarea').value.trim();
@@ -174,9 +191,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (editIndex === -1) {
       // Nueva tarea
-      tasks.push(newTask);
+      await saveTaskToFirebase(newTask);
 
-      Swal.fire({ // Uso de SweetAlert
+      Swal.fire({
         icon: 'success',
         title: 'Tarea agregada',
         text: 'Tu tarea fue guardada correctamente.',
@@ -186,11 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
       // Tarea actualizada
-      tasks[editIndex] = newTask;
+      newTask.id = tasks[editIndex].id; // importante para actualizar
+      await saveTaskToFirebase(newTask, true);
       editIndex = -1;
       taskForm.querySelector('#confirmar_tarea').textContent = 'Confirmar';
 
-      Swal.fire({ // Uso de SweetAlert
+      Swal.fire({
         icon: 'success',
         title: 'Tarea actualizada',
         text: 'Los cambios fueron guardados con éxito.',
@@ -199,10 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    saveTasks();
-    renderTasks(searchInput.value, getSelectedStatuses());
+    await loadTasks(); // recargar después de guardar
     taskForm.reset();
   });
+
 
   // Handle search input
   searchInput.addEventListener('input', () => {
