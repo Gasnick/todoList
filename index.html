@@ -13,7 +13,7 @@
     <nav class="sidebar-menu">
         <ul>
             <li><a href="#" class="active">Home</a></li>
-            <li><a href="#calendario">Calendario</a></li>
+            <li><a href="pages/calendario.html">Calendario</a></li>
             <li><a href="pages/objetivos.html">Objetivos</a></li>
         </ul>
     </nav>
@@ -76,6 +76,14 @@
                 <div id="contador-finalizada" class="contador-tarea">✅ Finalizada: 0</div>
             </div>
 
+            <button id="exportPdfBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Export to PDF
+            </button>
+
         </section>
 
         <!-- Abajo: formulario -->
@@ -122,8 +130,11 @@
     </main>
 
     <script type="module" src="js/app.js"></script>
-    <script type="module" src="js/registroTareas.js" ></script>
+    <script type="module" src="js/registroTareas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
 
 </body>
 

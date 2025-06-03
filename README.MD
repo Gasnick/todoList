@@ -15,3 +15,4 @@ Usar firebase para almacenar las tareas
 -Exportar tareas a PDF.
 -Calendario en otra página HTML.
 -Apartado de objetivos y sus tareas en otra página HTML.
+-CÓDIGO COMENTADO Y DOCUMENTADO
