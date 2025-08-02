@@ -1,3 +1,13 @@
+import { db } from './registroTareas.js'
+import {
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', () => {
   const taskForm = document.querySelector('.agregar-tareas form');
   const taskListTable = document.querySelector('.listado-tareas table');
@@ -7,17 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
   let tasks = [];
   let editIndex = -1;
 
-  // Load tasks from localStorage
-  function loadTasks() {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      tasks = JSON.parse(storedTasks);
+  async function loadTasks() {
+    tasks = [];
+    const querySnapshot = await getDocs(collection(db, "tareas"));
+    querySnapshot.forEach((docSnap) => {
+      tasks.push({ id: docSnap.id, ...docSnap.data() });
+      renderTasks();
+    });
+  }
+
+  async function saveTaskToFirebase(task, isUpdate = false) {
+    if (isUpdate) {
+      const taskRef = doc(db, "tareas", task.id);
+      await updateDoc(taskRef, task);
+    } else {
+      await addDoc(collection(db, "tareas"), task);
     }
   }
 
-  // Save tasks to localStorage
-  function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+  async function deleteTaskFromFirebase(id) {
+    await deleteDoc(doc(db, "tareas", id));
   }
 
   // Map checkbox values to task.estado values if needed
@@ -27,16 +46,25 @@ document.addEventListener('DOMContentLoaded', () => {
     'Finalizada': 'Finalizada'
   };
 
-  // Render tasks in the table
+  // Checkea vencimiento de tareas
+  function checkDueDateStatus(dueDate) {
+    const today = new Date();
+    const due = new Date(dueDate);
+
+    const diff = due - today;
+    const daysLeft = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (daysLeft < 0) return 'overdue';
+    if (daysLeft <= 7) return 'near-due';
+    return 'ok';
+  }
+
   function renderTasks(filterText = '', filterStatuses = []) {
-    // Normalize filter statuses to match task.estado values
     const normalizedFilterStatuses = filterStatuses.map(s => statusValueMap[s] || s);
 
-    // Clear existing rows except header
     const rows = taskListTable.querySelectorAll('tr:not(:first-child)');
     rows.forEach(row => row.remove());
 
-    // Filter tasks
     const filteredTasks = tasks.filter(task => {
       const matchesText = task.nombre.toLowerCase().includes(filterText.toLowerCase()) ||
         task.prioridad.toLowerCase().includes(filterText.toLowerCase());
@@ -44,52 +72,56 @@ document.addEventListener('DOMContentLoaded', () => {
       return matchesText && matchesStatus;
     });
 
-    // Add rows
     filteredTasks.forEach((task, index) => {
       const row = document.createElement('tr');
 
+      const dueStatus = checkDueDateStatus(task.fechaFin);
+      if (dueStatus === 'overdue') {
+        row.classList.add('task-overdue');
+      } else if (dueStatus === 'near-due') {
+        row.classList.add('task-near-due');
+      }
+
       row.innerHTML = `
-        <td>${index + 1}</td>
-        <td>${task.nombre}</td>
-        <td>${task.prioridad}</td>
-        <td>${task.estado}</td>
-        <td>${task.objetivo}</td>
-        <td>${task.fechaInicio}</td>
-        <td>${task.fechaFin}</td>
-        <td class="acciones">
-          <img src="assets/icons/edit.png" alt="Editar" class="icono accion-editar" data-index="${index}" style="cursor:pointer;">
-          <img src="assets/icons/delete.png" alt="Eliminar" class="icono accion-eliminar" data-index="${index}" style="cursor:pointer;">
-        </td>
-      `;
+      <td>${index + 1}</td>
+      <td>${task.nombre}</td>
+      <td>${task.prioridad}</td>
+      <td>${task.estado}</td>
+      <td>${task.objetivo}</td>
+      <td>${formatDate(task.fechaInicio)}</td>
+      <td>${formatDate(task.fechaFin)} ${dueStatus === 'near-due' ? '⚠️' : dueStatus === 'overdue' ? '❗' : ''}</td>
+      <td class="acciones">
+        <img src="assets/icons/edit.png" alt="Edit" class="icono accion-editar" data-index="${index}" style="cursor:pointer;">
+        <img src="assets/icons/delete.png" alt="Delete" class="icono accion-eliminar" data-index="${index}" style="cursor:pointer;">
+      </td>
+    `;
 
       taskListTable.appendChild(row);
     });
 
-    // Attach event listeners for delete
     const deleteButtons = taskListTable.querySelectorAll('.accion-eliminar');
-
     deleteButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.getAttribute('data-index'));
 
         Swal.fire({
-          title: '¿Eliminar tarea?',
-          text: "Esta acción no se puede deshacer",
+          title: 'Delete task?',
+          text: "This action can't be undone.",
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#d33',
           cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar'
-        }).then((result) => {
+          confirmButtonText: 'Yes, delete',
+          cancelButtonText: 'Cancel'
+        }).then(async (result) => {
           if (result.isConfirmed) {
-            tasks.splice(idx, 1);
+            await deleteTaskFromFirebase(tasks[idx].id);
             saveTasks();
             renderTasks(searchInput.value, getSelectedStatuses());
 
             Swal.fire({
-              title: 'Eliminada',
-              text: 'La tarea fue eliminada correctamente.',
+              title: 'Deleted',
+              text: 'Task was successfully deleted.',
               icon: 'success',
               timer: 1500,
               showConfirmButton: false
@@ -99,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Attach event listeners for edit
     const editButtons = taskListTable.querySelectorAll('.accion-editar');
     editButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -113,12 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
         taskForm.querySelector('#detalle_tarea').value = task.detalle;
         taskForm.querySelector('#fecha_i').value = task.fechaInicio;
         taskForm.querySelector('#fecha_f').value = task.fechaFin;
-        taskForm.querySelector('#confirmar_tarea').textContent = 'Actualizar';
+        taskForm.querySelector('#confirmar_tarea').textContent = 'Update';
       });
     });
 
-    // Al final de renderTasks
     actualizarContadores();
+
 
   }
 
@@ -144,8 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return selected;
   }
 
-  // Handle form submission to add or update task
-  taskForm.addEventListener('submit', (e) => {
+  taskForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const nombre = taskForm.querySelector('#nom_tarea').value.trim();
@@ -173,9 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (editIndex === -1) {
       // Nueva tarea
-      tasks.push(newTask);
+      await saveTaskToFirebase(newTask);
 
-      Swal.fire({ // Uso de SweetAlert
+      Swal.fire({
         icon: 'success',
         title: 'Tarea agregada',
         text: 'Tu tarea fue guardada correctamente.',
@@ -185,11 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
       // Tarea actualizada
-      tasks[editIndex] = newTask;
+      newTask.id = tasks[editIndex].id; // importante para actualizar
+      await saveTaskToFirebase(newTask, true);
       editIndex = -1;
       taskForm.querySelector('#confirmar_tarea').textContent = 'Confirmar';
 
-      Swal.fire({ // Uso de SweetAlert
+      Swal.fire({
         icon: 'success',
         title: 'Tarea actualizada',
         text: 'Los cambios fueron guardados con éxito.',
@@ -198,10 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
 
-    saveTasks();
-    renderTasks(searchInput.value, getSelectedStatuses());
+    await loadTasks(); // recargar después de guardar
     taskForm.reset();
   });
+
 
   // Handle search input
   searchInput.addEventListener('input', () => {
@@ -218,4 +249,47 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial load
   loadTasks();
   renderTasks();
+
+  // Cambiar formato de fecha
+  function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses comienzan en 0
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  // Convertir a pdf
+  document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const tableData = tasks.map((task, index) => ([
+      index + 1,
+      task.nombre,
+      task.prioridad,
+      task.estado,
+      task.objetivo,
+      formatDate(task.fechaInicio),
+      formatDate(task.fechaFin)
+    ]));
+
+
+    const tableHeaders = [['#', 'Tarea', 'Prioridad', 'Estado', 'Objetivo', 'Fecha Inicio', 'Fecha Fin']];
+
+    doc.setFontSize(16);
+    doc.text('Task List', 14, 20);
+
+    doc.autoTable({
+      head: tableHeaders,
+      body: tableData,
+      startY: 30,
+      styles: { fontSize: 10 }
+    });
+
+    doc.save('task_list.pdf');
+  });
+
+
 });
