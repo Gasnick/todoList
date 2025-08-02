@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Al final de renderTasks
     actualizarContadores();
 
-
   }
 
   // Actualizar contadores
